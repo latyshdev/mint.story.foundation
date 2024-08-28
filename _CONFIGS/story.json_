@@ -2,8 +2,8 @@
   "PROJECT_NAME": "STORY",
   "CHAIN_ID": 1513,
 
-  "_PAUSE_BETWEEN_ACCOUNTS": "Пауза в секундах. [60, 120]",
-  "PAUSE_BETWEEN_ACCOUNTS": [50, 90],
+  "_PAUSE_BETWEEN_ACCOUNTS": "Пауза в секундах. [10, 30]",
+  "PAUSE_BETWEEN_ACCOUNTS": [10, 30],
 
   "_PAUSE_SEC_BETWEEN_TXN": "Пауза в секундах между транзакциями в рамках одного кошелька",
   "PAUSE_SEC_BETWEEN_TXN": [60, 15],

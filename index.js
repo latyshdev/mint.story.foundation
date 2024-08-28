@@ -252,10 +252,11 @@ const {createProvider} = require('./providers');
         await pause(pauseSecondsMs);
         
       } catch (err) {
-        logError(standardMsg + ` | ${err.message}`);
-        msg = consoleTime() + " | " + standardMsg + ` | ERROR: ${err.message}` + "\n";
-        fs.appendFileSync(`./_LOGS/logs.txt`, msg, `utf-8`);
-        fs.appendFileSync(`./_CONFIGS/fail.txt`, row + "\n", `utf-8`);
+        logError(err.message);
+        // logError(standardMsg + ` | ${err.message}`);
+        // msg = consoleTime() + " | " + standardMsg + ` | ERROR: ${err.message}` + "\n";
+        // fs.appendFileSync(`./_LOGS/logs.txt`, msg, `utf-8`);
+        // fs.appendFileSync(`./_CONFIGS/fail.txt`, row + "\n", `utf-8`);
         console.error(err);
       }
 
@@ -304,7 +305,7 @@ const {createProvider} = require('./providers');
   while (true) {
     let res = await Main();
     await pause( 10 * SECOND);
-    if (res === true) await pause( 5 * MINUTE);
+    if (res === true) await pause( 15 * MINUTE);
   }
 
 })();
