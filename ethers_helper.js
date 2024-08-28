@@ -122,7 +122,7 @@ async function waitGwei(BOT, PROJECT_NAME) {
   if (BOT.tx_params[PROJECT_NAME].type === 2) {
     BOT.tx_params[PROJECT_NAME].gasPrice = null;
     BOT.tx_params[PROJECT_NAME].maxFeePerGas = gwei[PROJECT_NAME].gasPrice;
-    BOT.tx_params[PROJECT_NAME].maxPriorityFeePerGas = gwei[PROJECT_NAME].maxPriorityFeePerGas;
+    BOT.tx_params[PROJECT_NAME].maxPriorityFeePerGas = gwei[PROJECT_NAME].gasPrice;
   } 
 
   // console.log(BOT.configs[PROJECT_NAME]);

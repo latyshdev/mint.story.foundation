@@ -163,7 +163,7 @@ const {createProvider} = require('./providers');
       } 
 
       balance = ethers.formatEther(balance);
-      logInfo(BOT)
+      logInfo(BOT.wallets["STORY"].address)
 
 
       let standardMsg = `Кошелек [${BOT.wallets["STORY"].address} | ${id}] [${parseInt(i) + 1} из ${length}]`;
@@ -221,12 +221,13 @@ const {createProvider} = require('./providers');
         // Записываем логи и обновляем файлы
         fs.appendFileSync(`./_LOGS/logs.txt`, msg, `utf-8`);
         fs.appendFileSync(`./_CONFIGS/ready.txt`, row + "\n", `utf-8`);
+
+        // Удаляем кошелек из файла неготовых
+        unready = unready.filter(el => el !== row); 
+        fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
        
         // Если минт был совершен ранее, то пропускаем паузу
         if (tx === true) {
-          // Удаляем кошелек из файла неготовых
-          // unready = unready.filter(el => el !== row); 
-          // fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
           delete BOT;
           continue;
         };
@@ -307,6 +308,10 @@ const {createProvider} = require('./providers');
 
   while (true) {
     let res = await Main();
+    logSuccess(`ЗАВЕРШИЛИ ЦИКЛ`);
+    console.log();
+    console.log();
+    console.log();
     await pause( 10 * SECOND);
     if (res === true) await pause( 15 * MINUTE);
   }
