@@ -157,7 +157,7 @@ const {createProvider} = require('./providers');
 
       let balance = await getBalance(BOT, "STORY");
 
-      if (!balance) {
+      if (balance === false) {
         delete BOT;
         continue;
       } 
