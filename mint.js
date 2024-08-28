@@ -23,5 +23,6 @@ exports.mint = {
 };
 
 async function StoryNFT(BOT, choice) {
-
+  const mintABI = require(`./abi.json`);
+  const nftABI = require(`./abi_nft.json`);
 }

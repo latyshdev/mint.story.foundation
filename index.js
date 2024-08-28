@@ -157,17 +157,12 @@ const questions = [
       // console.log(row);
       console.log();
 
-      // Удаляем кошелек из файла неготовых
-      unready = unready.filter(el => el !== row); 
-      fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
-
-
       let [id, privateKey, proxy] = row.split(";").map(el => el.trim());
       // console.log(id, privateKey, proxy);
       // continue;
 
       const BOT = {};
-      await createBot(BOT);
+      await createBot(BOT, privateKey, proxy);
       // console.log(BOT);
 
       let balance = await getBalance(BOT, "STORY");
@@ -193,6 +188,10 @@ const questions = [
         // Txn Type: 0 (Legacy) Rabby Wallet ???
         BOT.tx_params["STORY"].type = 0;
 
+      // Удаляем кошелек из файла неготовых
+      unready = unready.filter(el => el !== row); 
+      fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
+
         let msg = ``;
 
         // Делаем минт
@@ -210,7 +209,7 @@ const questions = [
           } else {
             logWarn(standardMsg + `| ${tx.hash}`);
             // msg = consoleTime() + " | " + standardMsg + `| Транзакция в очереди | ${tx.hash}\n`;
-            await tx.wait();
+            // await tx.wait();
             logSuccess(standardMsg + `| ${tx.hash}`);
             msg += consoleTime() + " | " + standardMsg + `| Транзакция готова | ${CONFIG.EXPLORER}\\${tx.hash}\n`;
           }
@@ -254,7 +253,7 @@ const questions = [
 
 
     // createBot
-    async function createBot(BOT) {
+    async function createBot(BOT, privateKey, proxy) {
       BOT.configs = {"STORY": CONFIG};
       BOT.tx_params = {"STORY": {}};
       // Создаем провайдера

@@ -11,4 +11,7 @@ node_modules
 !.json_
 !_CONFIGS/chalkColors.json
 
+!abi.json
+!abi_nft.json
+
 /_CONFIGS/*.txt
