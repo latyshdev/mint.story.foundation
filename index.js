@@ -300,6 +300,11 @@ const {createProvider} = require('./providers');
 }
 
 (async () => {
-  let res = await Main();
-  if (res === true) await pause( 5 * MINUTE);
+
+  while (true) {
+    let res = await Main();
+    await pause( 10 * SECOND);
+    if (res === true) await pause( 5 * MINUTE);
+  }
+
 })();
