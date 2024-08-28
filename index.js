@@ -146,7 +146,7 @@ const {createProvider} = require('./providers');
       console.log();
 
       let [id, privateKey, proxy] = row.split(";").map(el => el.trim());
-      console.log(id, proxy);
+      // console.log(id, proxy);
       // continue;
 
       if (!proxy || !privateKey) continue;
@@ -163,6 +163,13 @@ const {createProvider} = require('./providers');
       } 
 
       balance = ethers.formatEther(balance);
+      logInfo(BOT)
+
+
+      let standardMsg = `Кошелек [${BOT.wallets["STORY"].address} | ${id}] [${parseInt(i) + 1} из ${length}]`;
+      standardMsg += ` | ${mint[choice].name} `;
+
+      logInfo(standardMsg);
 
       logInfo(`Баланс кошелька: ${balance}`);
 
@@ -171,12 +178,6 @@ const {createProvider} = require('./providers');
         delete BOT;
         continue;
       };
-
-      let standardMsg = `Кошелек [${BOT.wallets["STORY"].address} | ${id}] [${parseInt(i) + 1} из ${length}]`;
-      standardMsg += ` | ${mint[choice].name} `;
-
-
-        logInfo(standardMsg);
 
         //Ждем газ и выставляем параметры транзакции (gasPrice)
         // BOT.tx_params["STORY"].maxFeePerGas = 0;
@@ -206,8 +207,8 @@ const {createProvider} = require('./providers');
             logError(standardMsg + `| Не смогли заминтить`);
             msg += consoleTime() + " | " + standardMsg + `| Не смогли заминтить\n`
           } else {
-            logWarn(standardMsg + `| ${tx.hash}`);
-            msg = consoleTime() + " | " + standardMsg + `| Транзакция в очереди | ${CONFIG.EXPLORER}/${tx.hash}\n`;
+            logWarn(standardMsg + `| | Type: ${BOT.tx_params["STORY"].type} | ${tx.hash}`);
+            msg = consoleTime() + " | " + standardMsg + `| Транзакция в очереди | Type: ${BOT.tx_params["STORY"].type} | ${CONFIG.EXPLORER}/${tx.hash}\n`;
             if (CONFIG.WAIT_TX) {
               await tx.wait();
               logSuccess(standardMsg + `| ${tx.hash}`);
@@ -226,6 +227,8 @@ const {createProvider} = require('./providers');
           // Удаляем кошелек из файла неготовых
           // unready = unready.filter(el => el !== row); 
           // fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
+          delete BOT;
+          continue;
         };
 
         if (tx === false) {
