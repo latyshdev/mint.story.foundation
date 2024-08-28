@@ -85,6 +85,7 @@ async function waitGwei(BOT, PROJECT_NAME) {
         
       let gasPrice =  ethers.formatUnits(gwei[PROJECT_NAME].gasPrice, 'gwei');
       gasPrice = parseFloat(gasPrice);
+      
 
       let gasPriceProjectOK = gasPrice < BOT.configs[PROJECT_NAME].MAX_GWEI_PROJECT ;
 
@@ -112,15 +113,20 @@ async function waitGwei(BOT, PROJECT_NAME) {
     await pause(SECOND * 15);
   }
 
-  if (BOT.configs[PROJECT_NAME].TXN_TYPE === 0) {
-    BOT.tx_params[PROJECT_NAME].gasPrice = gasPrice;
+
+
+  if (BOT.tx_params[PROJECT_NAME].type === 0) {
+    BOT.tx_params[PROJECT_NAME].gasPrice = gwei[PROJECT_NAME].gasPrice;
   }
 
-  if (BOT.configs[PROJECT_NAME].TXN_TYPE === 2) {
+  if (BOT.tx_params[PROJECT_NAME].type === 2) {
     BOT.tx_params[PROJECT_NAME].gasPrice = null;
     BOT.tx_params[PROJECT_NAME].maxFeePerGas = gwei[PROJECT_NAME].gasPrice;
     BOT.tx_params[PROJECT_NAME].maxPriorityFeePerGas = gwei[PROJECT_NAME].maxPriorityFeePerGas;
   } 
+
+  // console.log(BOT.configs[PROJECT_NAME]);
+  // console.log(BOT.tx_params[PROJECT_NAME]);
 
   return gwei[PROJECT_NAME];
 

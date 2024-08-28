@@ -15,31 +15,8 @@ const {createProvider} = require('./providers');
 // console.log(mint);
 
 /* ========================================================================= */
-// Код
-const mintArray = Object.keys(mint).map(element => element).reverse();
-// console.log(mintArray);
-
-/* ========================================================================= */
-// Меню
-const questions = [
-  {
-    name: "choice",
-    type: "list",
-    message: " ",
-    choices: mintArray.map(function(key){
-      return {
-        name: (!mint[key].ended) ? mint[key].name : `${mint[key].name} [ENDED]`, 
-        value: key}
-    })
-  }
-];
-
-/* ========================================================================= */
-(
-  async () => {
-    // Выбор минта
-    const answers = await inquirer.prompt(questions);
-    let choice = await answers.choice;
+  async function Main () {
+    let choice = 1;
     // console.log("Выбрали для минта:", mint[choice].name, choice);
     logInfo(`Выбрали для минта: ${hexLog(mint[choice].name, 'balance')}`)
 
@@ -163,30 +140,41 @@ const questions = [
     fs.appendFileSync(`./_LOGS/logs.txt`, `${"*".repeat(100)}\n${consoleTime()}\n${mint[choice].name} | Кошельков: ${length}\n${"*".repeat(100)}\n`);
 
     for await (let [i, row] of unready.entries()) {
+
+      try {
       // console.log(row);
       console.log();
 
       let [id, privateKey, proxy] = row.split(";").map(el => el.trim());
-      // console.log(id, privateKey, proxy);
+      console.log(id, proxy);
       // continue;
+
+      if (!proxy || !privateKey) continue;
 
       const BOT = {};
       await createBot(BOT, privateKey, proxy);
       // console.log(BOT);
 
       let balance = await getBalance(BOT, "STORY");
+
+      if (!balance) {
+        delete BOT;
+        continue;
+      } 
+
       balance = ethers.formatEther(balance);
 
       logInfo(`Баланс кошелька: ${balance}`);
 
       if (balance < CONFIG.MIN_BALANCE) {
-        logWarn(`Слишком маленький баланс`)
+        logWarn(`Слишком маленький баланс`);
+        delete BOT;
         continue;
       };
 
       let standardMsg = `Кошелек [${BOT.wallets["STORY"].address} | ${id}] [${parseInt(i) + 1} из ${length}]`;
       standardMsg += ` | ${mint[choice].name} `;
-      try {
+
 
         logInfo(standardMsg);
 
@@ -198,14 +186,10 @@ const questions = [
         BOT.tx_params["STORY"].type = CONFIG.TXN_TYPE;
         
         if (CONFIG.RANDOM_TXN_TYPE) {
-          BOT.tx_params["STORY"].type = shuffle([0,2])[0]
+          BOT.tx_params["STORY"].type = shuffle([0,2])[0];
         }
 
-        console.log(BOT.tx_params["STORY"]);
-
-      // Удаляем кошелек из файла неготовых
-      unready = unready.filter(el => el !== row); 
-      fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
+        // console.log(BOT.tx_params["STORY"]);
 
         let msg = ``;
 
@@ -223,10 +207,12 @@ const questions = [
             msg += consoleTime() + " | " + standardMsg + `| Не смогли заминтить\n`
           } else {
             logWarn(standardMsg + `| ${tx.hash}`);
-            // msg = consoleTime() + " | " + standardMsg + `| Транзакция в очереди | ${tx.hash}\n`;
-            if (CONFIG.WAIT_TX) await tx.wait();
-            logSuccess(standardMsg + `| ${tx.hash}`);
-            msg += consoleTime() + " | " + standardMsg + `| Транзакция готова | ${CONFIG.EXPLORER}\\${tx.hash}\n`;
+            msg = consoleTime() + " | " + standardMsg + `| Транзакция в очереди | ${CONFIG.EXPLORER}/${tx.hash}\n`;
+            if (CONFIG.WAIT_TX) {
+              await tx.wait();
+              logSuccess(standardMsg + `| ${tx.hash}`);
+              msg += consoleTime() + " | " + standardMsg + `| Транзакция готова | ${CONFIG.EXPLORER}/${tx.hash}\n`;  
+            }
           }
 
         }
@@ -236,13 +222,23 @@ const questions = [
         fs.appendFileSync(`./_CONFIGS/ready.txt`, row + "\n", `utf-8`);
        
         // Если минт был совершен ранее, то пропускаем паузу
-        if (tx === true) continue;
-        if (tx === false) continue;
+        if (tx === true) {
+          // Удаляем кошелек из файла неготовых
+          // unready = unready.filter(el => el !== row); 
+          // fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
+        };
 
+        if (tx === false) {
+          delete BOT;
+          continue;
+        }
 
         // Если последний кошелек, то ждать не нужно
         // console.log(i, i+1, i+1 === unready.length, unready.length);
-        if (i+1 === length) continue;
+        if (i+1 === length) {
+          delete BOT;
+          continue;
+        }
 
         // Пауза между кошельками
         let pauseSeconds = randomBetweenInt(
@@ -300,7 +296,10 @@ const questions = [
       return BOT;
     }
 
-    process.exit(1);
-  }
-)();
+    return;
+}
 
+(async () => {
+  await Main();
+  await pause( 5 * MINUTE);
+})();

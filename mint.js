@@ -30,7 +30,7 @@ async function StoryNFT(BOT, choice) {
   const contractNFT = new ethers.Contract(choice.NFT, ABI_nft, BOT.wallets["STORY"]);
 
   const balanceOf = await contractNFT.balanceOf(BOT.wallets["STORY"].address);
-  console.log("balanceOf", balanceOf);
+  // console.log("balanceOf", balanceOf);
 
   if (balanceOf > 0) {
     return true;
