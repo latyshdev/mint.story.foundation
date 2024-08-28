@@ -3,10 +3,10 @@
   "CHAIN_ID": 1513,
 
   "_PAUSE_BETWEEN_ACCOUNTS": "Пауза в секундах. [60, 120]",
-  "PAUSE_BETWEEN_ACCOUNTS": [60, 120],
+  "PAUSE_BETWEEN_ACCOUNTS": [50, 90],
 
   "_PAUSE_SEC_BETWEEN_TXN": "Пауза в секундах между транзакциями в рамках одного кошелька",
-  "PAUSE_SEC_BETWEEN_TXN": [10, 15],
+  "PAUSE_SEC_BETWEEN_TXN": [60, 15],
 
   "_SHUFFLE_PK": "Миксовать кошельки",
   "SHUFFLE_PK": true,
@@ -18,7 +18,16 @@
   "PROJECT_GAS_DECIMALS": "-9",
 
   "_MAX_GWEI_PROJECT": "Максимальный gwei в STORY. С плавающей точкой. 0.075",
-  "MAX_GWEI_PROJECT": 750.123456789,
+  "MAX_GWEI_PROJECT": 730,
+
+  "_WAIT_TX": "Ждать минта транзакции. true - да, ",
+  "WAIT_TX": true,
+
+  "_TXN_TYPE": "Тип транзы. 0 - LEGACY, 2 - EIP 1559",
+  "TXN_TYPE": 2,
+
+  "_RANDOM_TXN_TYPE": "Рандомить тип транзакции. false - нет, true - да",
+  "RANDOM_TXN_TYPE": false,
 
   "_GAS_AMOUNT_MULTIPLICATOR": "Увеличенное количество газа. Rabby Wallet ставит 1.5.",
   "GAS_AMOUNT_MULTIPLICATOR": 1,

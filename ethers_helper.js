@@ -78,7 +78,7 @@ async function waitGwei(BOT, PROJECT_NAME) {
       if (!gwei[PROJECT_NAME]) {
         logError("Не смогли получить данные о комиссиях");
       }
-      console.log(gwei)
+      // console.log(gwei)
 
       gwei[PROJECT_NAME] = ceilFeeData(gwei[PROJECT_NAME], 
         BOT.configs[PROJECT_NAME].PROJECT_GAS_DECIMALS);
@@ -112,9 +112,15 @@ async function waitGwei(BOT, PROJECT_NAME) {
     await pause(SECOND * 15);
   }
 
-  // BOT.tx_params[PROJECT_NAME].gasPrice = gwei[PROJECT_NAME].gasPrice;
-  BOT.tx_params[PROJECT_NAME].maxFeePerGas = gwei[PROJECT_NAME].maxFeePerGas;
-  BOT.tx_params[PROJECT_NAME].maxPriorityFeePerGas = gwei[PROJECT_NAME].maxPriorityFeePerGas;
+  if (BOT.configs[PROJECT_NAME].TXN_TYPE === 0) {
+    BOT.tx_params[PROJECT_NAME].gasPrice = gasPrice;
+  }
+
+  if (BOT.configs[PROJECT_NAME].TXN_TYPE === 2) {
+    BOT.tx_params[PROJECT_NAME].gasPrice = null;
+    BOT.tx_params[PROJECT_NAME].maxFeePerGas = gwei[PROJECT_NAME].gasPrice;
+    BOT.tx_params[PROJECT_NAME].maxPriorityFeePerGas = gwei[PROJECT_NAME].maxPriorityFeePerGas;
+  } 
 
   return gwei[PROJECT_NAME];
 

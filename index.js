@@ -135,12 +135,21 @@ const questions = [
     if (CONFIG.MAX_GWEI_ETHEREUM) logWarn(`Включено отслеживание gwei в Ethereum: ${CONFIG.MAX_GWEI_ETHEREUM}`);
     if (!CONFIG.MAX_ERRORS) {
       logError(`Не установлен параметр MAX_ERRORS в конфиге`);
+      return;
+    }
+
+    if (!CONFIG.hasOwnProperty(`TXN_TYPE`)) {
+      logError(`Не установлен параметр TXN_TYPE в конфиге`);
+      return; 
     }
 
     logWarn(`Количество ошибок: ${CONFIG.MAX_ERRORS}`);
     logWarn(`Максимальный gwei: ${CONFIG.MAX_GWEI_PROJECT}`);
     logWarn(`Пауза между кошельками: от ${CONFIG.PAUSE_BETWEEN_ACCOUNTS[0]} до ${CONFIG.PAUSE_BETWEEN_ACCOUNTS[1]} секунд`);
     logWarn(`Тип прокси: ${CONFIG.PROXY_TYPE}`);
+    logWarn(`Тип транзакции: ${CONFIG.TXN_TYPE}`);
+    logWarn(`Рандомный тип транзакции: ${CONFIG.RANDOM_TXN_TYPE}`);
+    logWarn(`Ожидание транзакции: ${CONFIG.WAIT_TX}`);
     logWarn(`RPC: ${CONFIG.RPC}`);
     console.log();
 
@@ -186,10 +195,17 @@ const questions = [
         // BOT.tx_params["STORY"].maxPriorityFeePerGas = 0;
 
         // Txn Type: 0 (Legacy) Rabby Wallet ???
-        BOT.tx_params["STORY"].type = 2;
+        BOT.tx_params["STORY"].type = CONFIG.TXN_TYPE;
+        
+        if (CONFIG.RANDOM_TXN_TYPE) {
+          BOT.tx_params["STORY"].type = shuffle([0,2])[0]
+        }
+
+        console.log(BOT.tx_params["STORY"]);
+
       // Удаляем кошелек из файла неготовых
       unready = unready.filter(el => el !== row); 
-      // fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
+      fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
 
         let msg = ``;
 
@@ -208,7 +224,7 @@ const questions = [
           } else {
             logWarn(standardMsg + `| ${tx.hash}`);
             // msg = consoleTime() + " | " + standardMsg + `| Транзакция в очереди | ${tx.hash}\n`;
-            // await tx.wait();
+            if (CONFIG.WAIT_TX) await tx.wait();
             logSuccess(standardMsg + `| ${tx.hash}`);
             msg += consoleTime() + " | " + standardMsg + `| Транзакция готова | ${CONFIG.EXPLORER}\\${tx.hash}\n`;
           }
