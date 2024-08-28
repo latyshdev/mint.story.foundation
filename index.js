@@ -296,10 +296,10 @@ const {createProvider} = require('./providers');
       return BOT;
     }
 
-    return;
+    return true;
 }
 
 (async () => {
-  await Main();
-  await pause( 5 * MINUTE);
+  let res = await Main();
+  if (res === true) await pause( 5 * MINUTE);
 })();
