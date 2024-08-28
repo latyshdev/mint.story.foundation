@@ -186,11 +186,10 @@ const questions = [
         // BOT.tx_params["STORY"].maxPriorityFeePerGas = 0;
 
         // Txn Type: 0 (Legacy) Rabby Wallet ???
-        BOT.tx_params["STORY"].type = 0;
-
+        BOT.tx_params["STORY"].type = 2;
       // Удаляем кошелек из файла неготовых
       unready = unready.filter(el => el !== row); 
-      fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
+      // fs.writeFileSync(`./_CONFIGS/unready.txt`, unready.join("\n"), `utf-8`);
 
         let msg = ``;
 

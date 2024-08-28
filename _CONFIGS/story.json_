@@ -15,13 +15,13 @@
   "MAX_ERRORS": 10,
 
   "_PROJECT_GAS_DECIMALS": "Количество знаков после запятой. 0: целое, -1: 0.1, -2: 0.11, -3: 0.111",
-  "PROJECT_GAS_DECIMALS": "-3",
+  "PROJECT_GAS_DECIMALS": "-9",
 
   "_MAX_GWEI_PROJECT": "Максимальный gwei в STORY. С плавающей точкой. 0.075",
-  "MAX_GWEI_PROJECT": 999.999,
+  "MAX_GWEI_PROJECT": 750.123456789,
 
   "_GAS_AMOUNT_MULTIPLICATOR": "Увеличенное количество газа. Rabby Wallet ставит 1.5.",
-  "GAS_AMOUNT_MULTIPLICATOR": 1.5,
+  "GAS_AMOUNT_MULTIPLICATOR": 1,
 
   "NATIVE_TOKEN": "ETH",
 

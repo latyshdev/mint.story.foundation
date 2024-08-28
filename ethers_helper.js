@@ -71,69 +71,6 @@ async function waitGwei(BOT, PROJECT_NAME) {
     try {
 
       // Если нам нужно следить за Ethereum Gwei
-      if (BOT.configs[PROJECT_NAME].MAX_GWEI_ETHEREUM) {
-       
-        if (PROJECT_NAME === 'ETHEREUM') {
-          gwei[PROJECT_NAME] = await BOT.providers[PROJECT_NAME].getFeeData();
-        } else {
-          gwei[PROJECT_NAME] = await BOT.providers[PROJECT_NAME].getFeeData();
-          gwei['ETHEREUM'] = await BOT.providers['ETHEREUM'].getFeeData()
-          .catch(err => false);
-        }
-        
-        if (!gwei['ETHEREUM'] || !gwei[PROJECT_NAME]) {
-          logError("Не смогли получить данные о комиссиях");
-        }
-        // console.log(gwei)
-
-        gwei[PROJECT_NAME] = ceilFeeData(gwei[PROJECT_NAME], 
-          BOT.configs[PROJECT_NAME].PROJECT_GAS_DECIMALS);
-          
-        let gasPrice =  ethers.formatUnits(gwei[PROJECT_NAME].gasPrice, 'gwei');
-        gasPrice = parseFloat(gasPrice);
-
-        gwei['ETHEREUM'] = ceilFeeData(gwei['ETHEREUM'], 0);
-        let gasPriceEthereum =  ethers.formatUnits(gwei['ETHEREUM'].gasPrice, 'gwei');
-        gasPriceEthereum = parseFloat(gasPriceEthereum);
-
-        // console.log(gasPrice, typeof gasPrice);
-        // console.log(BOT.configs[PROJECT_NAME].MAX_GWEI_PROJECT, typeof BOT.configs[PROJECT_NAME].MAX_GWEI_PROJECT);
-        // console.log(gasPrice <= BOT.configs[PROJECT_NAME].MAX_GWEI_PROJECT);
-
-        let gasPriceProjectOK = gasPrice <= BOT.configs[PROJECT_NAME].MAX_GWEI_PROJECT ;
-        let gasPriceProjectETH = gasPriceEthereum <= BOT.configs[PROJECT_NAME].MAX_GWEI_ETHEREUM ;
-
-        if (gasPriceProjectOK) {
-          gasPrice = hexLog(gasPrice, `success`)
-        } else {
-          gasPrice = hexLog(gasPrice, `error`)
-        }
-
-        if (gasPriceProjectETH) {
-          gasPriceEthereum = hexLog(gasPriceEthereum, `success`)
-        } else {
-          gasPriceEthereum = hexLog(gasPriceEthereum, `error`)
-        }
-
-
-        // console.log(gwei);gwei...
-        let msg = `${consoleTime()} | ETHEREUM: ${gasPriceEthereum}|`+
-        `${BOT.configs[PROJECT_NAME].MAX_GWEI_ETHEREUM}` +
-        " || " +
-        `${PROJECT_NAME}: ${gasPrice}|` +
-        `${BOT.configs[PROJECT_NAME].MAX_GWEI_PROJECT}` +
-        "\r";
-        // process.stdout.write(msg);
-        process.stdout.write(msg);
-
-        if (gasPriceProjectOK && gasPriceProjectETH) {
-          console.log();
-          ready = true;
-          continue;
-        }
-
-      // Если нам не нужно следить за Ethereum Gwei
-      } else {
 
       gwei[PROJECT_NAME] = await BOT.providers[PROJECT_NAME].getFeeData()
         .catch(err => false);
@@ -141,7 +78,7 @@ async function waitGwei(BOT, PROJECT_NAME) {
       if (!gwei[PROJECT_NAME]) {
         logError("Не смогли получить данные о комиссиях");
       }
-      // console.log(gwei)
+      console.log(gwei)
 
       gwei[PROJECT_NAME] = ceilFeeData(gwei[PROJECT_NAME], 
         BOT.configs[PROJECT_NAME].PROJECT_GAS_DECIMALS);
@@ -164,8 +101,6 @@ async function waitGwei(BOT, PROJECT_NAME) {
       }
       // console.log();
 
-      };
-
     } catch (err) {
       // console.error(err);
       logError(`Ошибка при получении газа: ${err.message}`);
@@ -177,7 +112,9 @@ async function waitGwei(BOT, PROJECT_NAME) {
     await pause(SECOND * 15);
   }
 
-  BOT.tx_params[PROJECT_NAME].gasPrice = gwei[PROJECT_NAME].gasPrice;
+  // BOT.tx_params[PROJECT_NAME].gasPrice = gwei[PROJECT_NAME].gasPrice;
+  BOT.tx_params[PROJECT_NAME].maxFeePerGas = gwei[PROJECT_NAME].maxFeePerGas;
+  BOT.tx_params[PROJECT_NAME].maxPriorityFeePerGas = gwei[PROJECT_NAME].maxPriorityFeePerGas;
 
   return gwei[PROJECT_NAME];
 

@@ -23,6 +23,40 @@ exports.mint = {
 };
 
 async function StoryNFT(BOT, choice) {
-  const mintABI = require(`./abi.json`);
-  const nftABI = require(`./abi_nft.json`);
+  const ABI_mint = require(`./abi.json`);
+  const ABI_nft = require(`./abi_nft.json`);
+
+  const contract = new ethers.Contract(choice.mint, ABI_mint, BOT.wallets["STORY"]);
+  const contractNFT = new ethers.Contract(choice.NFT, ABI_nft, BOT.wallets["STORY"]);
+
+  const balanceOf = await contractNFT.balanceOf(BOT.wallets["STORY"].address);
+  console.log("balanceOf", balanceOf);
+
+  if (balanceOf > 0) {
+    return true;
+  } else {
+
+    // Ждем газ
+    let gasIsNormal = await waitGwei(BOT, `STORY`);
+    if (!gasIsNormal) return false;
+
+    // mintNFTGated(bytes signature, string twHash)
+    const gasAmount = await contract["mintNFTGated"].estimateGas(
+      `0x`, 
+      `0x0000000000000000000000000000000000000000000000000000000000000000`,
+      BOT.tx_params["STORY"]
+    );
+    
+    BOT.tx_params["STORY"].gasLimit = gasMultiplicate(gasAmount, BOT.configs["STORY"].GAS_AMOUNT_MULTIPLICATOR);
+    console.log(gasAmount, BOT.tx_params["STORY"].gasLimit);
+    // return true;
+
+    // mintNFTGated(bytes signature, string twHash)
+    let tx = await contract.mintNFTGated(
+      `0x`, 
+      `0x0000000000000000000000000000000000000000000000000000000000000000`,
+      BOT.tx_params["STORY"]
+    );
+    return tx;
+  }
 }
