@@ -15,8 +15,30 @@ const {createProvider} = require('./providers');
 // console.log(mint);
 
 /* ========================================================================= */
+// Код
+const mintArray = Object.keys(mint).map(element => element).reverse();
+
+/* ========================================================================= */
+// Меню
+const questions = [
+  {
+    name: "choice",
+    type: "list",
+    message: " ",
+    choices: mintArray.map(function(key){
+      return {
+        name: (!mint[key].ended) ? mint[key].name : `${mint[key].name} [ENDED]`, 
+        value: key}
+    })
+  }
+];
+
+/* ========================================================================= */
   async function Main () {
-    let choice = 1;
+    // Выбор минта
+    const answers = await inquirer.prompt(questions);
+    let choice = await answers.choice;
+    // let choice = 1;
     // console.log("Выбрали для минта:", mint[choice].name, choice);
     logInfo(`Выбрали для минта: ${hexLog(mint[choice].name, 'balance')}`)
 
@@ -106,7 +128,7 @@ const {createProvider} = require('./providers');
       .split("\n")
       .filter(row => row !== "");
 
-    unready =  (CONFIG.SHUFFLE_PK) ? shuffle(unready) : unready;
+    unready =  (CONFIG.SHUFFLE_PK === true) ? shuffle(unready) : unready;
 
     logWarn(`RPC: ${CONFIG.RPC}`);
     if (CONFIG.MAX_GWEI_ETHEREUM) logWarn(`Включено отслеживание gwei в Ethereum: ${CONFIG.MAX_GWEI_ETHEREUM}`);
@@ -175,6 +197,7 @@ const {createProvider} = require('./providers');
 
       if (balance < CONFIG.MIN_BALANCE) {
         logWarn(`Слишком маленький баланс`);
+        fs.appendFileSync(`./_LOGS/res.txt`, `${BOT.wallets["STORY"].address}\tFALSE\t${balance}\n`, `utf-8`);
         delete BOT;
         continue;
       };
@@ -228,11 +251,13 @@ const {createProvider} = require('./providers');
        
         // Если минт был совершен ранее, то пропускаем паузу
         if (tx === true) {
+          fs.appendFileSync(`./_LOGS/res.txt`, `${BOT.wallets["STORY"].address}\tTRUE\t${balance}\n`, `utf-8`);
           delete BOT;
           continue;
         };
 
         if (tx === false) {
+          fs.appendFileSync(`./_LOGS/res.txt`, `${BOT.wallets["STORY"].address}\tFALSE\t${balance}\n`, `utf-8`);
           delete BOT;
           continue;
         }
