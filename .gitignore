@@ -13,5 +13,6 @@ node_modules
 
 !abi.json
 !abi_nft.json
+!OpenEditionERC721.json
 
 /_CONFIGS/*.txt

@@ -38,7 +38,7 @@ const questions = [
     // Выбор минта
     const answers = await inquirer.prompt(questions);
     let choice = await answers.choice;
-    // let choice = 1;
+    // let choice = 2;
     // console.log("Выбрали для минта:", mint[choice].name, choice);
     logInfo(`Выбрали для минта: ${hexLog(mint[choice].name, 'balance')}`)
 
@@ -309,14 +309,6 @@ const questions = [
         proxy: BOT.proxy
       });
 
-      // Создаем провайдера ETHEREUM
-      if (CONFIG.MAX_GWEI_ETHEREUM) {
-        BOT.providers["ETHEREUM"] = await createProvider({
-          RPC: CONFIG.RPC_ETHEREUM,
-          proxy: BOT.proxy
-        });
-      };
-
       // Создаем кошелек
       BOT.wallets = {};
       BOT.wallets["STORY"] = await getWallet(privateKey, BOT.providers["STORY"]);
@@ -338,7 +330,7 @@ const questions = [
     console.log();
     console.log();
     await pause( 10 * SECOND);
-    if (res === true) await pause( 15 * MINUTE);
+    if (res === true) await pause( 10 * MINUTE);
   }
 
 })();
