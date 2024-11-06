@@ -25,6 +25,8 @@ Total raised: $ 134.3M
 
 ```node index.js```
 
+Proxy format: user:pass:ip:port
+
 # Donate
 EVM: 0x99984bBFF08C169796E1B070CFfCb3795fAf9999
 
